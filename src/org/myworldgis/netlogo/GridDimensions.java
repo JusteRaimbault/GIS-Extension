@@ -7,7 +7,7 @@ package org.myworldgis.netlogo;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import java.awt.Dimension;
-import org.nlogo.api.ExtensionObject;
+import org.nlogo.core.ExtensionObject;
 
 
 /**
@@ -232,6 +232,10 @@ public final strictfp class GridDimensions implements Cloneable, ExtensionObject
         }
     }
     
+    public int hashCode() {
+      return (int) ((Math.pow(2, _size.hashCode()) * Math.pow(3, _envelope.hashCode())) % Integer.MAX_VALUE);
+    }
+
     //--------------------------------------------------------------------------
     // Cloneable implementation
     //--------------------------------------------------------------------------

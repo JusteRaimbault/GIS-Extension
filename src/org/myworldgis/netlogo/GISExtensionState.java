@@ -15,8 +15,8 @@ import org.myworldgis.projection.Projection;
 import org.nlogo.api.Context;
 import org.nlogo.api.Dump;
 import org.nlogo.api.ExtensionException;
-import org.nlogo.api.ExtensionObject;
-import org.nlogo.api.File;
+import org.nlogo.core.ExtensionObject;
+import org.nlogo.core.File;
 import org.nlogo.api.Link;
 import org.nlogo.api.LogoException;
 import org.nlogo.api.OutputDestinationJ;
@@ -113,7 +113,11 @@ public final strictfp class GISExtensionState implements ExtensionObject {
                                 c.getAgent(), 
                                 true, 
                                 false,
+<<<<<<< HEAD
                                 OutputDestinationJ.NORMAL() ) ;
+=======
+                                OutputDestinationJ.NORMAL()) ;
+>>>>>>> 046a4028ff4ae1449fc1b3f609353a39231ebbb0
             } catch (LogoException e) { }
         }
         _projection = newProjection;

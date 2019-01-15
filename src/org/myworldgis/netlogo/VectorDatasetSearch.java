@@ -11,8 +11,9 @@ import org.nlogo.api.Context;
 import org.nlogo.api.ExtensionException;
 import org.nlogo.api.LogoException;
 import org.nlogo.api.LogoListBuilder;
-import org.nlogo.api.Nobody$;
-import org.nlogo.api.Syntax;
+import org.nlogo.core.Nobody$;
+import org.nlogo.core.Syntax;
+import org.nlogo.core.SyntaxJ;
 
 
 /**
@@ -32,7 +33,7 @@ public abstract strictfp class VectorDatasetSearch {
         }
         
         public Syntax getSyntax() {
-            return Syntax.reporterSyntax(new int[] { Syntax.WildcardType(),
+            return SyntaxJ.reporterSyntax(new int[] { Syntax.WildcardType(),
                                                      Syntax.StringType(),
                                                      Syntax.StringType() },
                                          Syntax.WildcardType());
@@ -63,7 +64,7 @@ public abstract strictfp class VectorDatasetSearch {
         }
         
         public Syntax getSyntax() {
-            return Syntax.reporterSyntax(new int[] { Syntax.WildcardType(),
+            return SyntaxJ.reporterSyntax(new int[] { Syntax.WildcardType(),
                                                      Syntax.StringType(),
                                                      Syntax.StringType() },
                                          Syntax.ListType());
@@ -95,7 +96,7 @@ public abstract strictfp class VectorDatasetSearch {
         }
         
         public Syntax getSyntax() {
-            return Syntax.reporterSyntax(new int[] { Syntax.WildcardType(),
+            return SyntaxJ.reporterSyntax(new int[] { Syntax.WildcardType(),
                                                      Syntax.StringType(),
                                                      Syntax.StringType() | Syntax.NumberType() },
                                          Syntax.ListType());
@@ -106,7 +107,7 @@ public abstract strictfp class VectorDatasetSearch {
                 throws ExtensionException, LogoException {
             VectorDataset dataset = VectorDataset.getDataset(args[0]);
             String propertyName = getPropertyName(dataset, args[1]);
-            Comparable max = (Comparable)args[2].get();
+            Comparable<Object> max = (Comparable<Object>)args[2].get();
             LogoListBuilder result = new LogoListBuilder();
             for (Iterator<VectorFeature> i = dataset.getFeatures().iterator(); i.hasNext();) {
                 VectorFeature feature = i.next();
@@ -127,7 +128,7 @@ public abstract strictfp class VectorDatasetSearch {
         }
         
         public Syntax getSyntax() {
-            return Syntax.reporterSyntax(new int[] { Syntax.WildcardType(),
+            return SyntaxJ.reporterSyntax(new int[] { Syntax.WildcardType(),
                                                      Syntax.StringType(),
                                                      Syntax.StringType() | Syntax.NumberType() },
                                          Syntax.ListType());
@@ -138,7 +139,7 @@ public abstract strictfp class VectorDatasetSearch {
                 throws ExtensionException, LogoException {
             VectorDataset dataset = VectorDataset.getDataset(args[0]);
             String propertyName = getPropertyName(dataset, args[1]);
-            Comparable min = (Comparable)args[2].get();
+            Comparable<Object> min = (Comparable<Object>)args[2].get();
             LogoListBuilder result = new LogoListBuilder();
             for (Iterator<VectorFeature> i = dataset.getFeatures().iterator(); i.hasNext();) {
                 VectorFeature feature = i.next();
@@ -159,7 +160,7 @@ public abstract strictfp class VectorDatasetSearch {
         }
         
         public Syntax getSyntax() {
-            return Syntax.reporterSyntax(new int[] { Syntax.WildcardType(),
+            return SyntaxJ.reporterSyntax(new int[] { Syntax.WildcardType(),
                                                      Syntax.StringType(),
                                                      Syntax.StringType() | Syntax.NumberType(),
                                                      Syntax.StringType() | Syntax.NumberType() },
@@ -171,8 +172,8 @@ public abstract strictfp class VectorDatasetSearch {
                 throws ExtensionException, LogoException {
             VectorDataset dataset = VectorDataset.getDataset(args[0]);
             String propertyName = getPropertyName(dataset, args[1]);
-            Comparable min = (Comparable)args[2].get();
-            Comparable max = (Comparable)args[3].get();
+            Comparable<Object> min = (Comparable<Object>)args[2].get();
+            Comparable<Object> max = (Comparable<Object>)args[3].get();
             LogoListBuilder result = new LogoListBuilder();
             for (Iterator<VectorFeature> i = dataset.getFeatures().iterator(); i.hasNext();) {
                 VectorFeature feature = i.next();
@@ -193,7 +194,7 @@ public abstract strictfp class VectorDatasetSearch {
         }
         
         public Syntax getSyntax() {
-            return Syntax.reporterSyntax(new int[] { Syntax.WildcardType(),
+            return SyntaxJ.reporterSyntax(new int[] { Syntax.WildcardType(),
                                                      Syntax.StringType() },
                                          Syntax.NumberType() | Syntax.StringType());
         }
@@ -203,7 +204,7 @@ public abstract strictfp class VectorDatasetSearch {
                 throws ExtensionException, LogoException {
             VectorDataset dataset = VectorDataset.getDataset(args[0]);
             String propertyName = getPropertyName(dataset, args[1]);
-            Comparable result = null;
+            Comparable<Object> result = null;
             for (Iterator<VectorFeature> i = dataset.getFeatures().iterator(); i.hasNext();) {
                 VectorFeature feature = i.next();
                 Object value = feature.getProperty(propertyName);
@@ -212,7 +213,7 @@ public abstract strictfp class VectorDatasetSearch {
                         // careful! don't accept NaN values
                         continue;
                     }
-                    result = (Comparable)value;
+                    result = (Comparable<Object>)value;
                 }
             }
             return result;
@@ -227,7 +228,7 @@ public abstract strictfp class VectorDatasetSearch {
         }
         
         public Syntax getSyntax() {
-            return Syntax.reporterSyntax(new int[] { Syntax.WildcardType(),
+            return SyntaxJ.reporterSyntax(new int[] { Syntax.WildcardType(),
                                                      Syntax.StringType() },
                                          Syntax.NumberType() | Syntax.StringType());
         }
@@ -237,7 +238,7 @@ public abstract strictfp class VectorDatasetSearch {
                 throws ExtensionException, LogoException {
             VectorDataset dataset = VectorDataset.getDataset(args[0]);
             String propertyName = getPropertyName(dataset, args[1]);
-            Comparable result = null;
+            Comparable<Object> result = null;
             for (Iterator<VectorFeature> i = dataset.getFeatures().iterator(); i.hasNext();) {
                 VectorFeature feature = i.next();
                 Object value = feature.getProperty(propertyName);
@@ -246,7 +247,7 @@ public abstract strictfp class VectorDatasetSearch {
                         // careful! don't accept NaN values
                         continue;
                     }
-                    result = (Comparable)value;
+                    result = (Comparable<Object>)value;
                 }
             }
             return result;

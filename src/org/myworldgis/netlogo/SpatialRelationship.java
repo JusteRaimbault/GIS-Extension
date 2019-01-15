@@ -18,15 +18,16 @@ import org.nlogo.api.Argument;
 import org.nlogo.api.Context;
 import org.nlogo.api.ExtensionException;
 import org.nlogo.api.LogoException;
-import org.nlogo.api.LogoList;
-import org.nlogo.api.Syntax;
+import org.nlogo.core.LogoList;
+import org.nlogo.core.Syntax;
+import org.nlogo.core.SyntaxJ;
 
 
 /**
- * 
+ *
  */
 public abstract strictfp class SpatialRelationship {
-    
+
 
     //--------------------------------------------------------------------------
     // Inner classes
@@ -34,17 +35,17 @@ public abstract strictfp class SpatialRelationship {
 
     /** */
     private static abstract strictfp class DefaultTest extends GISExtension.Reporter {
-        
+
         public String getAgentClassString() {
             return "OTPL";
         }
-        
+
         public Syntax getSyntax() {
-            return Syntax.reporterSyntax(new int[] { Syntax.WildcardType(), Syntax.WildcardType() },
+            return SyntaxJ.reporterSyntax(new int[] { Syntax.WildcardType(), Syntax.WildcardType() },
                                          Syntax.BooleanType());
         }
-        
-        public Object reportInternal (Argument args[], Context context) 
+
+        public Object reportInternal (Argument args[], Context context)
                 throws ExtensionException, LogoException {
             Geometry geom0 = getGeometry(args[0].get());
             Geometry geom1 = getGeometry(args[1].get());
@@ -54,46 +55,46 @@ public abstract strictfp class SpatialRelationship {
                 return Boolean.FALSE;
             }
         }
-        
+
         protected abstract boolean relates (Geometry agentGeom, Geometry featureGeom);
     }
-    
+
     /** */
     public static final strictfp class IntersectionTest extends DefaultTest {
         protected boolean relates (Geometry geom0, Geometry geom1) {
             return geom0.intersects(geom1);
         }
     }
-    
+
     /** */
     public static final strictfp class ContainsTest extends DefaultTest {
         protected boolean relates (Geometry geom0, Geometry geom1) {
             return geom0.covers(geom1);
         }
     }
-    
+
     /** */
     public static final strictfp class ContainedByTest extends DefaultTest {
         protected boolean relates (Geometry geom0, Geometry geom1) {
             return geom0.coveredBy(geom1);
         }
     }
-    
+
     /** */
     public static final strictfp class GeneralTest extends GISExtension.Reporter {
-        
+
         public String getAgentClassString() {
             return "OTPL";
         }
-        
+
         public Syntax getSyntax() {
-            return Syntax.reporterSyntax(new int[] { Syntax.WildcardType(), 
+            return SyntaxJ.reporterSyntax(new int[] { Syntax.WildcardType(),
                                                      Syntax.WildcardType(),
                                                      Syntax.StringType() },
                                          Syntax.BooleanType());
         }
 
-        public Object reportInternal (Argument args[], Context context) 
+        public Object reportInternal (Argument args[], Context context)
                 throws ExtensionException, LogoException {
             Geometry geom0 = getGeometry(args[0].get());
             Geometry geom1 = getGeometry(args[1].get());
@@ -105,43 +106,43 @@ public abstract strictfp class SpatialRelationship {
             }
         }
     }
-    
+
     /** */
     public static final strictfp class GetRelationship extends GISExtension.Reporter {
-        
+
         public String getAgentClassString() {
             return "OTPL";
         }
-        
+
         public Syntax getSyntax() {
-            return Syntax.reporterSyntax(new int[] { Syntax.WildcardType(), 
+            return SyntaxJ.reporterSyntax(new int[] { Syntax.WildcardType(),
                                                      Syntax.WildcardType() },
                                          Syntax.StringType());
         }
 
-        public Object reportInternal (Argument args[], Context context) 
+        public Object reportInternal (Argument args[], Context context)
                 throws ExtensionException, LogoException {
             Geometry geom0 = getGeometry(args[0].get());
             Geometry geom1 = getGeometry(args[1].get());
             return geom0.relate(geom1).toString();
         }
     }
-    
+
     /** */
     public static final strictfp class Intersecting extends GISExtension.Reporter {
-        
+
         public String getAgentClassString() {
             return "OTPL";
         }
-        
+
         public Syntax getSyntax() {
-            return Syntax.reporterSyntax(Syntax.PatchsetType(), 
+            return SyntaxJ.reporterSyntax(Syntax.PatchsetType(),
                                          new int[] { Syntax.WildcardType() },
                                          Syntax.PatchsetType(),
                                          Syntax.NormalPrecedence());
         }
 
-        public Object reportInternal (Argument args[], Context context) 
+        public Object reportInternal (Argument args[], Context context)
                 throws ExtensionException, LogoException {
             AgentSet set = (AgentSet)args[0].get();
             PreparedGeometry pGeom = PreparedGeometryFactory.prepare(getGeometry(args[1].get()));
@@ -152,27 +153,26 @@ public abstract strictfp class SpatialRelationship {
                     agents.add((org.nlogo.agent.Agent)agent);
                 }
             }
-            return new org.nlogo.agent.ArrayAgentSet( ((org.nlogo.agent.AgentSet)set).kind(),
-                                                     agents.toArray(new org.nlogo.agent.Agent[agents.size()]),
-                                                     (org.nlogo.agent.World)context.getAgent().world());
+            return org.nlogo.agent.AgentSet.fromArray(
+                    set.kind(), agents.toArray(new org.nlogo.agent.Agent[agents.size()]));
         }
     }
-    
+
     //--------------------------------------------------------------------------
     // Class methods
     //--------------------------------------------------------------------------
-    
+
     /** */
     @SuppressWarnings("unchecked")
     static Geometry getGeometry (Object arg) throws ExtensionException {
         if (arg instanceof VectorDataset) {
-            Collection<VectorFeature> features = ((VectorDataset)arg).getFeatures();            
+            Collection<VectorFeature> features = ((VectorDataset)arg).getFeatures();
             Geometry[] geoms = new Geometry[features.size()];
             int gIndex = 0;
             for (Iterator<VectorFeature> i = features.iterator(); i.hasNext();) {
                 geoms[gIndex++] = i.next().getGeometry();
             }
-            return JTSUtils.flatten(GISExtension.getState().factory().createGeometryCollection(geoms)); 
+            return JTSUtils.flatten(GISExtension.getState().factory().createGeometryCollection(geoms));
         } else if (arg instanceof VectorFeature) {
             return ((VectorFeature)arg).getGeometry();
         } else if (arg instanceof Agent) {
@@ -189,7 +189,7 @@ public abstract strictfp class SpatialRelationship {
             LogoList list = (LogoList)arg;
             Geometry[] geoms = new Geometry[list.size()];
             int gIndex = 0;
-            for (Iterator i = list.iterator(); i.hasNext();) {
+            for (Iterator<Object> i = list.javaIterator(); i.hasNext();) {
                 geoms[gIndex++] = getGeometry(i.next());
             }
             return JTSUtils.flatten(GISExtension.getState().factory().createGeometryCollection(geoms));

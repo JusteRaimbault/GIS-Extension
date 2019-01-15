@@ -15,36 +15,37 @@ import org.nlogo.api.Argument;
 import org.nlogo.api.Context;
 import org.nlogo.api.ExtensionException;
 import org.nlogo.api.LogoException;
-import org.nlogo.api.LogoList;
+import org.nlogo.core.LogoList;
 import org.nlogo.api.Patch;
-import org.nlogo.api.Syntax;
+import org.nlogo.core.Reference;
+import org.nlogo.core.Syntax;
+import org.nlogo.core.SyntaxJ;
 import org.nlogo.api.World;
-import org.nlogo.prim._reference;
 
 
 /**
- * 
+ *
  */
 public abstract strictfp class ApplyCoverage {
-    
+
     //--------------------------------------------------------------------------
     // Inner classes
     //--------------------------------------------------------------------------
-    
+
     /** */
     public static final strictfp class SinglePolygonField extends GISExtension.Command {
-        
+
         public String getAgentClassString() {
             return "O";
         }
-        
+
         public Syntax getSyntax() {
-            return Syntax.commandSyntax(new int[] { Syntax.WildcardType(), 
-                                                    Syntax.StringType(), 
+            return SyntaxJ.commandSyntax(new int[] { Syntax.WildcardType(),
+                                                    Syntax.StringType(),
                                                     Syntax.ReferenceType() });
         }
-        
-        public void performInternal (Argument args[], Context context) 
+
+        public void performInternal (Argument args[], Context context)
                 throws AgentException, ExtensionException, LogoException {
             Object arg0 = args[0].get();
             if (!(arg0 instanceof VectorDataset)) {
@@ -53,7 +54,7 @@ public abstract strictfp class ApplyCoverage {
             applyCoverages(context.getAgent().world(),
                            (VectorDataset)arg0,
                            new String[] { args[1].getString() },
-                           new _reference[] { (_reference)((org.nlogo.nvm.Argument)args[2]).getReporter() });
+                           new Reference[] { ((org.nlogo.nvm.Argument)args[2]).getReference() });
         }
     }
     
@@ -79,7 +80,7 @@ public abstract strictfp class ApplyCoverage {
             // if someone else were willing to take a look, I'd really 
             // appreciate it. - ER 12/13/07
             
-            return Syntax.commandSyntax(new int[] { Syntax.WildcardType(), 
+            return SyntaxJ.commandSyntax(new int[] { Syntax.WildcardType(), 
                                                     Syntax.ListType(), 
                                                     Syntax.ReferenceType() | Syntax.RepeatableType() },
                                         3);
@@ -98,12 +99,12 @@ public abstract strictfp class ApplyCoverage {
             }
             String[] properties = new String[arg1.size()];
             int idx = 0;
-            for (Iterator i = arg1.iterator(); i.hasNext();) {
+            for (Iterator<Object> i = arg1.javaIterator(); i.hasNext();) {
                 properties[idx++] = (String)i.next();
             }
-            _reference[] variables = new _reference[propertyCount];
+            Reference[] variables = new Reference[propertyCount];
             for (int i = 0; i < propertyCount; i += 1) {
-                variables[i] = (_reference)((org.nlogo.nvm.Argument)args[i+2]).getReporter();
+                variables[i] = ((org.nlogo.core.Referenceable)((org.nlogo.nvm.Argument)args[i+2]).getReference()).makeReference();
             }
             applyCoverages(context.getAgent().world(),
                            (VectorDataset)arg0,
@@ -120,7 +121,7 @@ public abstract strictfp class ApplyCoverage {
         }
         
         public Syntax getSyntax() {
-            return Syntax.reporterSyntax(new int[] { }, Syntax.NumberType());
+            return SyntaxJ.reporterSyntax(new int[] { }, Syntax.NumberType());
         }
         
         public Object reportInternal (Argument args[], Context context) 
@@ -137,7 +138,7 @@ public abstract strictfp class ApplyCoverage {
         }
         
         public Syntax getSyntax() {
-            return Syntax.commandSyntax(new int[] { Syntax.NumberType() });
+            return SyntaxJ.commandSyntax(new int[] { Syntax.NumberType() });
         }
         
         public void performInternal (Argument args[], Context context) 
@@ -154,7 +155,7 @@ public abstract strictfp class ApplyCoverage {
         }
         
         public Syntax getSyntax() {
-            return Syntax.reporterSyntax(new int[] { }, Syntax.NumberType());
+            return SyntaxJ.reporterSyntax(new int[] { }, Syntax.NumberType());
         }
         
         public Object reportInternal (Argument args[], Context context) 
@@ -171,7 +172,7 @@ public abstract strictfp class ApplyCoverage {
         }
         
         public Syntax getSyntax() {
-            return Syntax.commandSyntax(new int[] { Syntax.NumberType() });
+            return SyntaxJ.commandSyntax(new int[] { Syntax.NumberType() });
         }
         
         public void performInternal (Argument args[], Context context) 
@@ -208,7 +209,7 @@ public abstract strictfp class ApplyCoverage {
     static void applyCoverages (World world,
                                 VectorDataset dataset,
                                 String[] properties,
-                                _reference[] variables) 
+                                Reference[] variables)
             throws AgentException, ExtensionException , LogoException {
         for (int i = 0; i < properties.length; i += 1) {
             if (!dataset.isValidPropertyName(properties[i])) {
@@ -224,16 +225,16 @@ public abstract strictfp class ApplyCoverage {
                 if (features.size() > 1) {
                     Object[] values = aggregatePropertyValues(patchGeometry, properties, features);
                     for (int i = 0; i < properties.length; i += 1) {
-                        p.setVariable(variables[i].reference.vn(), values[i]);
+                        p.setVariable(variables[i].vn(), values[i]);
                     }
                 } else if ((features.size() == 1) &&
                            (JTSUtils.fastGetSharedAreaRatio(patchGeometry, features.get(0).getGeometry()) > singleCellThreshold)) {
                     for (int i = 0; i < properties.length; i += 1) {
-                        p.setVariable(variables[i].reference.vn(), features.get(0).getProperty(properties[i]));
+                        p.setVariable(variables[i].vn(), features.get(0).getProperty(properties[i]));
                     }
                 } else {
                     for (int i = 0; i < properties.length; i += 1) {
-                        p.setVariable(variables[i].reference.vn(), GISExtension.MISSING_VALUE);
+                        p.setVariable(variables[i].vn(), GISExtension.MISSING_VALUE);
                     }
                 }
             }
